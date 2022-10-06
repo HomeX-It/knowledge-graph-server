@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  knowledge_graph_server:
+    build:
+      context: .
+    ports:
+      - "3030:3030"
+    restart: unless-stopped
+
