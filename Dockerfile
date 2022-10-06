@@ -9,4 +9,4 @@ COPY configuration/* $CONFIGURATION/
 
 WORKDIR $SCRIPTS
 RUN bash import_data.sh kg_tdb2_dataset
-# RUN bash build_text_search.sh configuration.ttl
+RUN bash build_text_search.sh tdb2_configuration.ttl
