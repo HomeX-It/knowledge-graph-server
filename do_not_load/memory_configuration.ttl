@@ -1,0 +1,81 @@
+## Licensed under the terms of http://www.apache.org/licenses/LICENSE-2.0
+
+# Example of a data service with SPARQL query ahgrep and update on an 
+# inference model.  Data is taken from TDB.
+
+PREFIX :        <#>
+PREFIX fuseki:  <http://jena.apache.org/fuseki#>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ja:      <http://jena.hpl.hp.com/2005/11/Assembler#>
+PREFIX tdb2:    <http://jena.apache.org/2016/tdb#>
+PREFIX text:    <http://jena.apache.org/text#> 
+PREFIX skos:    <http://www.w3.org/2004/02/skos/core#>
+
+[] rdf:type fuseki:Server ;
+   fuseki:services (
+     :service
+   ) .
+
+## ---------------------------------------------------------------
+
+# Full Ontology (includes reasoning)
+:kg_service rdf:type fuseki:Service ;
+    fuseki:name "knowledge_graph" ;
+    fuseki:dataset :kg_text_dataset ;
+    fuseki:serviceQuery "query", "sparql" ;
+    fuseki:serviceReadGraphStore "get" ;
+    fuseki:serviceReadWriteGraphStore "data" ;
+    fuseki:serviceReadWriteQuads  "" ;
+    fuseki:serviceUpdate "update" ;
+    fuseki:serviceUpload "upload" .
+
+:kg_text_dataset rdf:type text:TextDataset ;
+    text:dataset :kg_rdf_dataset ;
+    text:index :lucene_index .
+
+# Lucene Text Index
+:lucene_index a text:TextIndexLucene ;
+    # File location of index
+    text:directory <file:////fuseki-base/databases/lucene_index> ;
+    text:entityMap :entMap ;
+    text:storeValues true .
+
+:entMap a text:EntityMap ;
+    text:entityField "uri" ;
+    ## Must be defined in the text:map
+    text:defaultField "text" ;
+    ## Enable deleting of text index entries.
+    text:uidField "uid" ;
+    text:map (
+         # rdfs:label            
+         [ text:field "text" ; text:predicate rdfs:label ]
+         )
+    .
+
+# In-Memory Inference Dataset
+:kg_rdf_dataset rdf:type ja:RDFDataset ;
+    ja:defaultGraph :kg_infmodel .
+
+:kg_infmodel a ja:InfModel ;
+    #  ja:baseModel :kg_tdb2_graph ;
+     ja:reasoner [
+        #  ja:reasonerURL <http://jena.hpl.hp.com/2003/TransitiveReasoner>
+        #  ja:reasonerURL <http://jena.hpl.hp.com/2003/RDFSExptRuleReasoner>
+        #  ja:reasonerURL <http://jena.hpl.hp.com/2003/OWLFBRuleReasoner>
+        #  ja:reasonerURL <http://jena.hpl.hp.com/2003/OWLMiniFBRuleReasoner>
+        #  ja:reasonerURL <http://jena.hpl.hp.com/2003/OWLMicroFBRuleReasoner>
+        # Generic Rule Reasoner
+         ja:reasonerURL <http://jena.hpl.hp.com/2003/GenericRuleReasoner> ;
+         ja:rulesFrom <file:////fuseki-base/rules/default/rdfs-noresource.rules> 
+        #  ja:rulesFrom <file:////fuseki-base/rules/kg.rules> 
+     ];
+     .
+
+
+# # Extended Ontology as Base data in TDB.
+# :kg_tdb2_graph rdf:type tdb2:GraphTDB2 ;
+#     tdb2:dataset :kg_tdb2_dataset .
+
+# :kg_tdb2_dataset rdf:type tdb2:DatasetTDB2 ;
+#     tdb2:location  "/fuseki-base/databases/kg_tdb2_dataset" .
