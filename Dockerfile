@@ -1,7 +1,7 @@
 FROM us-docker.pkg.dev/hx-package-repository/docker-images/graph-server:v1.2.0
 
 # Java Virtual Machine Arguments
-ENV JAVA_OPTIONS=-Xmx5G
+ENV JAVA_OPTIONS=-Xmx8G
 
 COPY data/* $DATA/
 
