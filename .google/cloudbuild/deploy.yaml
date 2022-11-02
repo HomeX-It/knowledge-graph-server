@@ -12,7 +12,7 @@ steps:
       - build
       - '--no-cache'
       - '-t'
-      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '$_LOCATION-docker.pkg.dev/$_ARTIFACT_REGISTRY_PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
       - .
       - '-f'
       - Dockerfile
@@ -20,7 +20,7 @@ steps:
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '$_LOCATION-docker.pkg.dev/$_ARTIFACT_REGISTRY_PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
     id: Push
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     args:
@@ -29,7 +29,7 @@ steps:
       - update
       - $_SERVICE_NAME
       - '--platform=managed'
-      - '--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '--image=$_LOCATION-docker.pkg.dev/$_ARTIFACT_REGISTRY_PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
       - >-
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID,$_LABELS
       - '--region=$_DEPLOY_REGION'
@@ -37,7 +37,7 @@ steps:
     id: Deploy
     entrypoint: gcloud
 images:
-  - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+  - '$_LOCATION-docker.pkg.dev/$_ARTIFACT_REGISTRY_PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
 timeout: 60m
 options:
   substitutionOption: ALLOW_LOOSE
@@ -49,6 +49,10 @@ substitutions:
   _DEPLOY_REGION: us-central1
   _LABELS: gcb-trigger-id=a458fd82-280a-4cdd-b80b-4594c16b12e4
   _TRIGGER_ID: a458fd82-280a-4cdd-b80b-4594c16b12e4
+  _LOCATION: us
+  _ARTIFACT_REGISTRY_PROJECT_ID: hx-package-repository
+  _REPOSITORY: docker-images
+  _IMAGE: knowledge-graph-server  
 tags:
   - gcp-cloud-build-deploy-cloud-run
   - gcp-cloud-build-deploy-cloud-run-managed
