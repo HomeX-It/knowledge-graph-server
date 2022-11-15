@@ -4,7 +4,7 @@ steps:
       - cp
       - '-r'
       - >-
-        gs://hx_ontology-extender/2022-11-04-17:26:50/ontology/family/
+        gs://hx_ontology-extender/2022-11-11-13:58:05/ontology/family/
       - data/
     entrypoint: gsutil
   - name: gcr.io/cloud-builders/docker
