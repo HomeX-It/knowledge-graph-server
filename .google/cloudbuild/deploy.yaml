@@ -40,8 +40,8 @@ images:
 timeout: 180m
 options:
   substitutionOption: ALLOW_LOOSE
-  machineType: 'N1_HIGHCPU_8'
-  diskSizeGb: '300'
+  machineType: 'E2_HIGHCPU_8'
+  diskSizeGb: '500'
 
 substitutions:
   _GCR_HOSTNAME: us.gcr.io
