@@ -1,4 +1,4 @@
-FROM us-docker.pkg.dev/hx-package-repository/docker-images/graph-server:v1.4.5
+FROM us-docker.pkg.dev/hx-package-repository/docker-images/graph-server:v1.5.0
 
 # Java Virtual Machine Arguments
 ENV JAVA_OPTIONS=-Xmx15G
@@ -10,5 +10,6 @@ COPY configuration/* $CONFIGURATION/
 WORKDIR $SCRIPTS
 RUN bash import_data.sh kg_tdb2_dataset
 RUN bash build_text_search.sh tdb2_configuration.ttl
+RUN bash start_and_shutdown_fuseki.sh
 
 RUN rm -R $DATA
